@@ -3,10 +3,80 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Zahl — A natural-language calculator for macOS</title>
-<meta name="description" content="Zahl is a plain-text, natural-language calculator for macOS. Type expressions, get results. Currencies, units, variables, dates — instant." />
+
+<title>Zahl — Natural-Language Calculator for macOS · Currencies, Units, Dates</title>
+<meta name="description" content="Zahl is a fast, plain-text calculator for macOS. Type math, currencies, units, time zones, dates and variables in plain English and get instant answers. Auto-saving sheets, no clutter, one-time $10 price." />
+<meta name="keywords" content="natural language calculator, macOS calculator, plain text calculator, Mac calculator app, notepad calculator, currency converter Mac, unit converter Mac, calculator with variables, date calculator, time zone calculator, programmer calculator, Soulver alternative, Numi alternative, scratchpad calculator" />
+<meta name="author" content="Zahl" />
+<meta name="application-name" content="Zahl" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="googlebot" content="index, follow" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="theme-color" content="#f5f1ea" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1a1614" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Zahl" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="mobile-web-app-capable" content="yes" />
+
+<link rel="canonical" href="https://halebop17.github.io/zahl-app/" />
 <link rel="icon" type="image/png" href="assets/AppIcon-1024.png" />
 <link rel="apple-touch-icon" href="assets/AppIcon-1024.png" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Zahl" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://halebop17.github.io/zahl-app/" />
+<meta property="og:title" content="Zahl — Natural-Language Calculator for macOS" />
+<meta property="og:description" content="A quiet, fast, plain-text calculator for macOS. Type math, currencies, units, time zones and dates in plain English — get instant answers. One-time $10." />
+<meta property="og:image" content="https://halebop17.github.io/zahl-app/screens/zahl-1.jpg" />
+<meta property="og:image:alt" content="Screenshot of the Zahl calculator on macOS showing currency conversions, variables and proportional expressions." />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Zahl — Natural-Language Calculator for macOS" />
+<meta name="twitter:description" content="Type math, currencies, units, time zones and dates in plain English. Auto-saving sheets. macOS native. $10 one-time." />
+<meta name="twitter:image" content="https://halebop17.github.io/zahl-app/screens/zahl-1.jpg" />
+<meta name="twitter:image:alt" content="Zahl calculator on macOS — currencies, variables, proportional math." />
+
+<!-- Structured data: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Zahl",
+  "alternateName": "Zahl Calculator",
+  "description": "A natural-language, plain-text calculator for macOS. Handles arithmetic, currencies, units, time zones, dates, percentages and variables in one auto-saving sheet.",
+  "url": "https://halebop17.github.io/zahl-app/",
+  "image": "https://halebop17.github.io/zahl-app/assets/AppIcon-1024.png",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Calculator",
+  "operatingSystem": "macOS 13 Ventura or later",
+  "softwareRequirements": "macOS 13+ on Apple Silicon or Intel",
+  "offers": {
+    "@type": "Offer",
+    "price": "10.00",
+    "priceCurrency": "USD",
+    "url": "https://monokern.app/b/zahl-app",
+    "availability": "https://schema.org/InStock"
+  },
+  "featureList": [
+    "Natural-language arithmetic",
+    "Variables and references",
+    "Live currency conversion (ECB rates)",
+    "Length, mass, volume, area, energy, data, temperature and angle units",
+    "Date arithmetic and business-day math",
+    "Time-zone conversion",
+    "Hex, binary and octal",
+    "Sums, averages and aggregates",
+    "Auto-saving sheets",
+    "Customisable colours, fonts and global hotkey"
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -230,6 +300,33 @@
     animation: blink 1.05s steps(1) infinite;
   }
   @keyframes blink { 50% { opacity: 0; } }
+
+  /* ───── screenshot showcase ───── */
+  section.shot{
+    padding: 8px 0 72px;
+  }
+  .shot-figure{
+    margin: 0;
+    text-align: center;
+  }
+  .shot-figure img{
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    width: 720px;
+    height: auto;
+    border-radius: 14px;
+    box-shadow:
+      0 40px 80px -32px rgba(60, 30, 0, 0.28),
+      0 8px 18px -8px rgba(0,0,0,.10),
+      0 0 0 0.5px rgba(0,0,0,.04);
+  }
+  .shot-figure figcaption{
+    margin-top: 18px;
+    color: var(--ink-3);
+    font-size: 13.5px;
+    letter-spacing: 0.005em;
+  }
 
   /* ───── features ───── */
   section.features{
@@ -519,6 +616,15 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="shot" aria-label="Zahl screenshot">
+  <div class="wrap">
+    <figure class="shot-figure">
+      <img src="screens/zahl-1.jpg" alt="Zahl on macOS — a sheet showing currency conversions like 100 USD to EUR, named variables for a monthly budget, and proportional expressions such as 'double 75' and 'half of 64' — each line with its result on the right." width="807" height="720" loading="lazy" decoding="async" />
+      <figcaption>Real Zahl on macOS — your colours, your font, your shortcuts.</figcaption>
+    </figure>
   </div>
 </section>
 

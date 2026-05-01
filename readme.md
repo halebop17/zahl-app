@@ -4,7 +4,11 @@
 
 Zahl is a plain-text, natural-language calculator for macOS. Just type what you want to know — line by line, in plain English — and the answers appear instantly beside each line. No buttons, no formulas, no fuss. Every sheet is saved automatically, so your numbers are always right where you left them.
 
-![Zahl in action](screens/zahl-1.jpg)
+**[Visit the website](https://halebop17.github.io/zahl-app/)** · **[Read the full manual](https://github.com/halebop17/zahl-app/blob/main/manual.md)**
+
+<p align="center">
+  <img src="screens/zahl-1.jpg" alt="Zahl in action" width="550">
+</p>
 
 ---
 
@@ -25,7 +29,9 @@ double 75              → 150
 
 Name your numbers and reuse them. Update one value, and everything that depends on it updates with you. It's the simplicity of a notepad, with the power of a spreadsheet — and none of the cells.
 
-![Variables, arithmetic and dates in Zahl](screens/zahl-3.jpg)
+<p align="center">
+  <img src="screens/zahl-3.jpg" alt="Variables, arithmetic and dates in Zahl" width="550">
+</p>
 
 ---
 
@@ -39,7 +45,9 @@ Travelling? Cooking? Shipping? Designing? Zahl converts between currencies, unit
 - **Time zones** — `14:30 EST in Berlin`, `now in Tokyo`
 - **Dates** — `today + 30 days`, `next Monday`, `business days between Apr 1 and Apr 30`
 
-![Unit conversions in Zahl](screens/zahl-2.jpg)
+<p align="center">
+  <img src="screens/zahl-2.jpg" alt="Unit conversions in Zahl" width="550">
+</p>
 
 ---
 

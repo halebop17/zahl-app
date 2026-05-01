@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Zahl — A natural-language calculator for macOS</title>
+<meta name="description" content="Zahl is a plain-text, natural-language calculator for macOS. Type expressions, get results. Currencies, units, variables, dates — instant." />
+<link rel="icon" type="image/png" href="assets/AppIcon-1024.png" />
+<link rel="apple-touch-icon" href="assets/AppIcon-1024.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg:        oklch(0.985 0.005 70);
+    --bg-2:      oklch(0.965 0.008 70);
+    --ink:       oklch(0.22 0.012 60);
+    --ink-2:     oklch(0.45 0.010 60);
+    --ink-3:     oklch(0.62 0.008 60);
+    --rule:      oklch(0.90 0.008 70);
+    --rule-2:    oklch(0.94 0.008 70);
+    --accent:    oklch(0.70 0.18 50);   /* glossy orange */
+    --accent-2:  oklch(0.62 0.20 45);
+    --result:    oklch(0.55 0.14 50);   /* dim orange for results */
+    --sum:       oklch(0.45 0.05 250);  /* subtle blue-ish for sums */
+    --max: 1080px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Geist", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-feature-settings:"ss01","cv11";
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    line-height:1.5;
+    font-size:16px;
+  }
+  ::selection{ background: oklch(0.85 0.14 55); color: var(--ink); }
+
+  .mono{ font-family:"Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+  a:hover{ color: var(--accent-2); }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+
+  /* ───── nav ───── */
+  nav.top{
+    position: sticky; top:0; z-index: 50;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease;
+  }
+  nav.top.scrolled{ border-bottom-color: var(--rule); }
+  nav.top .row{
+    display:flex; align-items:center; justify-content:space-between;
+    height: 64px;
+  }
+  nav.top .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight: 600; letter-spacing:-0.01em;
+  }
+  nav.top .brand img{
+    width:28px; height:28px; border-radius:7px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 0 0 0.5px rgba(0,0,0,.04);
+  }
+  nav.top .links{
+    display:flex; align-items:center; gap: 28px;
+    color: var(--ink-2);
+    font-size: 14.5px;
+  }
+  nav.top .links a:hover{ color: var(--ink); }
+  nav.top .buy{
+    display:inline-flex; align-items:center; gap:8px;
+    height: 34px; padding: 0 14px;
+    background: var(--ink); color: var(--bg);
+    border-radius: 8px;
+    font-weight: 500; font-size: 14px;
+    transition: transform .15s ease, background .15s ease;
+  }
+  nav.top .buy:hover{ background: var(--accent); color: white; transform: translateY(-1px); }
+
+  /* ───── hero ───── */
+  header.hero{
+    padding: 88px 0 56px;
+  }
+  .hero .icon{
+    width: 116px; height: 116px;
+    border-radius: 26px;
+    box-shadow:
+      0 24px 48px -16px rgba(220, 95, 20, 0.35),
+      0 6px 14px -6px rgba(0,0,0,.12),
+      0 0 0 0.5px rgba(0,0,0,.04);
+    margin-bottom: 28px;
+  }
+  .hero h1{
+    font-size: clamp(44px, 7vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    margin: 0 0 18px;
+    max-width: 14ch;
+  }
+  .hero h1 em{
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero .lede{
+    font-size: clamp(18px, 1.6vw, 21px);
+    color: var(--ink-2);
+    max-width: 56ch;
+    line-height: 1.5;
+    margin: 0 0 32px;
+    letter-spacing: -0.005em;
+  }
+  .hero .ctas{
+    display:flex; align-items:center; gap: 14px; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    height: 46px; padding: 0 22px;
+    border-radius: 10px;
+    font-weight: 500; font-size: 15.5px;
+    transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary{
+    background: var(--accent); color: white;
+    box-shadow: 0 6px 16px -6px color-mix(in oklab, var(--accent) 70%, transparent);
+  }
+  .btn-primary:hover{ background: var(--accent-2); transform: translateY(-1px); color:white; }
+  .btn-ghost{
+    background: transparent; color: var(--ink);
+    border-color: var(--rule);
+  }
+  .btn-ghost:hover{ border-color: var(--ink); color: var(--ink); }
+  .btn .price{
+    font-size: 13px;
+    color: color-mix(in oklab, white 75%, transparent);
+    margin-left: 4px;
+  }
+  .meta{
+    margin-top: 22px;
+    color: var(--ink-3);
+    font-size: 13.5px;
+    display:flex; gap: 16px; flex-wrap:wrap;
+  }
+  .meta .dot{ width:3px; height:3px; background: var(--ink-3); border-radius:50%; align-self:center; }
+
+  /* ───── live sheet (the product surface) ───── */
+  section.sheet-section{
+    padding: 24px 0 80px;
+  }
+  .sheet{
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background: var(--bg-2);
+    overflow: hidden;
+    box-shadow:
+      0 30px 60px -30px rgba(60, 30, 0, 0.18),
+      0 2px 4px -2px rgba(0,0,0,.04);
+  }
+  .sheet .titlebar{
+    display:flex; align-items:center; gap:8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: linear-gradient(to bottom, color-mix(in oklab, var(--bg) 60%, white), var(--bg-2));
+  }
+  .sheet .traffic{ display:flex; gap:7px; }
+  .sheet .traffic span{
+    width:11px; height:11px; border-radius:50%;
+    background: oklch(0.85 0.005 60);
+  }
+  .sheet .traffic span:nth-child(1){ background: #ff5f57; }
+  .sheet .traffic span:nth-child(2){ background: #febc2e; }
+  .sheet .traffic span:nth-child(3){ background: #28c840; }
+  .sheet .filename{
+    margin-left: 12px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .sheet-body{
+    display:grid;
+    grid-template-columns: 1fr 220px;
+    min-height: 480px;
+    font-family:"Geist Mono", ui-monospace, monospace;
+    font-size: 15px;
+    line-height: 2.0;
+  }
+  .sheet .col-left{
+    padding: 22px 28px;
+    color: var(--ink);
+    border-right: 1px solid var(--rule-2);
+    background:
+      linear-gradient(var(--bg-2), var(--bg-2)),
+      repeating-linear-gradient(transparent 0 calc(2.0em - 1px), color-mix(in oklab, var(--rule) 60%, transparent) calc(2.0em - 1px) 2.0em);
+    background-blend-mode: normal;
+  }
+  .sheet .col-right{
+    padding: 22px 22px 22px 18px;
+    color: var(--result);
+    text-align: right;
+    background: var(--bg-2);
+  }
+  .sheet .row{ display:block; min-height: 2.0em; white-space: pre; }
+  .sheet .row.empty{ visibility:hidden; }
+  .sheet .row.label{ color: var(--ink-3); }
+  .sheet .row.comment{ color: var(--ink-3); font-style: italic; }
+  .sheet .row.var{ color: var(--ink); }
+  .sheet .row .var-name{ color: var(--accent-2); }
+  .sheet .row.sum{ color: var(--sum); font-weight: 500; }
+  .sheet .row .op{ color: var(--ink-3); }
+  .sheet .col-right .row.sum{ color: var(--sum); font-weight: 500; }
+
+  /* typed cursor */
+  .cursor{
+    display:inline-block; width:2px; height:1.05em;
+    background: var(--accent);
+    transform: translateY(3px);
+    margin-left: 1px;
+    animation: blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ───── features ───── */
+  section.features{
+    padding: 72px 0 56px;
+    border-top: 1px solid var(--rule);
+  }
+  .eyebrow{
+    font-family:"Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  .section-title{
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    margin: 0 0 14px;
+    max-width: 22ch;
+  }
+  .section-sub{
+    color: var(--ink-2);
+    font-size: 17px;
+    max-width: 56ch;
+    margin: 0 0 48px;
+    line-height: 1.55;
+  }
+  .feat-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .feat{
+    background: var(--bg);
+    padding: 28px 26px 30px;
+    display:flex; flex-direction:column; gap: 10px;
+    min-height: 220px;
+  }
+  .feat h3{
+    font-size: 17px;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .feat p{
+    color: var(--ink-2);
+    margin: 0 0 14px;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .feat .ex{
+    margin-top: auto;
+    background: var(--bg-2);
+    border: 1px solid var(--rule-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family:"Geist Mono", monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
+    color: var(--ink-2);
+  }
+  .feat .ex .res{ color: var(--result); }
+
+  /* ───── pricing ───── */
+  section.pricing{
+    padding: 72px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .pricing-card{
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 44px;
+    background: var(--bg-2);
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    position: relative;
+    overflow:hidden;
+  }
+  .pricing-card::before{
+    content:"";
+    position:absolute; inset: -1px auto auto -1px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle at top left, color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%);
+    pointer-events:none;
+  }
+  .pricing h2{
+    font-size: clamp(28px, 3vw, 36px);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .pricing .desc{
+    color: var(--ink-2);
+    font-size: 15.5px;
+    margin: 0 0 20px;
+    line-height: 1.55;
+  }
+  .pricing ul.included{
+    list-style: none; padding: 0; margin: 0 0 0;
+    display:grid; gap: 8px;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .pricing ul.included li{
+    display:flex; align-items:flex-start; gap: 10px;
+    color: var(--ink-2);
+  }
+  .pricing ul.included li::before{
+    content: "+";
+    color: var(--accent);
+    font-family:"Geist Mono", monospace;
+    font-weight: 500;
+    flex: 0 0 auto;
+  }
+  .price-block{
+    text-align: center;
+    padding: 28px 24px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+  }
+  .price-amount{
+    font-size: 56px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 0;
+  }
+  .price-amount .currency{
+    font-size: 24px;
+    color: var(--ink-2);
+    vertical-align: top;
+    margin-right: 4px;
+    font-weight: 500;
+  }
+  .price-once{
+    color: var(--ink-3);
+    font-size: 13.5px;
+    margin: 8px 0 22px;
+  }
+  .price-block .btn-primary{ width: 100%; justify-content:center; }
+  .price-block .small{
+    margin-top: 14px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  /* ───── footer ───── */
+  footer{
+    border-top: 1px solid var(--rule);
+    padding: 36px 0 56px;
+    color: var(--ink-3);
+    font-size: 13.5px;
+  }
+  footer .row{
+    display:flex; justify-content:space-between; align-items:center; gap: 16px; flex-wrap:wrap;
+  }
+  footer .left{ display:flex; align-items:center; gap: 10px; }
+  footer .left img{
+    width: 20px; height: 20px; border-radius:5px;
+  }
+  footer nav{ display:flex; gap: 22px; }
+  footer a:hover{ color: var(--ink); }
+
+  /* ───── responsive ───── */
+  @media (max-width: 860px){
+    .feat-grid{ grid-template-columns: repeat(2, 1fr); }
+    .pricing-card{ grid-template-columns: 1fr; gap: 28px; padding: 32px; }
+    .sheet-body{ grid-template-columns: 1fr 150px; font-size: 13.5px; }
+    .sheet .col-left{ padding: 18px 18px; }
+    .sheet .col-right{ padding: 18px 14px 18px 8px; }
+    nav.top .links a:not(.buy){ display: none; }
+  }
+  @media (max-width: 560px){
+    .feat-grid{ grid-template-columns: 1fr; }
+    header.hero{ padding: 56px 0 36px; }
+    .hero .icon{ width: 92px; height: 92px; border-radius: 21px; }
+    .sheet-body{ font-size: 12.5px; line-height: 1.95; }
+    .sheet-body{ grid-template-columns: 1fr 110px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top" id="topnav">
+  <div class="wrap row">
+    <a class="brand" href="#">
+      <img src="assets/AppIcon-1024.png" alt="" />
+      <span>Zahl</span>
+    </a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://monokern.app/contact">Support</a>
+      <a class="buy" href="https://monokern.app/b/zahl-app">Buy — $10</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="icon" src="assets/AppIcon-1024.png" alt="Zahl app icon" />
+    <h1>The calculator that <em>thinks in plain&nbsp;text.</em></h1>
+    <p class="lede">
+      Zahl is a quiet, fast, natural-language calculator for macOS.
+      Type what you mean — math, currencies, units, dates — and the answer
+      appears next to it. Every sheet saves itself.
+    </p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="https://monokern.app/b/zahl-app">
+        Buy Zahl <span class="price">$10 · one-time</span>
+      </a>
+      <a class="btn btn-ghost" href="#features">See what it does</a>
+    </div>
+    <div class="meta">
+      <span>macOS 13 Ventura or later</span>
+      <span class="dot"></span>
+      <span>Apple Silicon &amp; Intel</span>
+      <span class="dot"></span>
+      <span>Two activations per license</span>
+    </div>
+  </div>
+</header>
+
+<section class="sheet-section">
+  <div class="wrap">
+    <div class="sheet" aria-hidden="true">
+      <div class="titlebar">
+        <div class="traffic"><span></span><span></span><span></span></div>
+        <div class="filename mono">trip-budget.zahl</div>
+      </div>
+      <div class="sheet-body">
+        <div class="col-left" id="col-left">
+<span class="row comment">// Berlin trip · 5 nights</span>
+<span class="row var"><span class="var-name">flight</span> = 240 eur</span>
+<span class="row var"><span class="var-name">hotel</span> = 95 eur * 5</span>
+<span class="row var"><span class="var-name">food</span> = 35 eur * 5</span>
+<span class="row">flight + hotel + food</span>
+<span class="row empty"> </span>
+<span class="row label">// in dollars</span>
+<span class="row">prev to usd</span>
+<span class="row empty"> </span>
+<span class="row">today + 12 days</span>
+<span class="row">9:30 am EST in Berlin</span>
+<span class="row empty"> </span>
+<span class="row">6 ft 2 in to cm</span>
+<span class="row">70 kg to lbs</span>
+<span class="row empty"> </span>
+<span class="row var"><span class="var-name">subtotal</span> = 89.90</span>
+<span class="row">subtotal + 19% tax</span>
+<span class="row">15% tip on prev</span>
+<span class="row sum">sum<span class="cursor"></span></span>
+        </div>
+        <div class="col-right" id="col-right">
+<span class="row"></span>
+<span class="row">240 EUR</span>
+<span class="row">475 EUR</span>
+<span class="row">175 EUR</span>
+<span class="row">890 EUR</span>
+<span class="row empty"></span>
+<span class="row"></span>
+<span class="row">967.45 USD</span>
+<span class="row empty"></span>
+<span class="row">May 13 2026</span>
+<span class="row">3:30 pm</span>
+<span class="row empty"></span>
+<span class="row">187.96 cm</span>
+<span class="row">154.32 lb</span>
+<span class="row empty"></span>
+<span class="row">89.90</span>
+<span class="row">106.98</span>
+<span class="row">16.05</span>
+<span class="row sum">212.93</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <p class="eyebrow">What it does</p>
+    <h2 class="section-title">A calculator you can talk&nbsp;to.</h2>
+    <p class="section-sub">
+      Zahl reads each line as a small expression. It knows numbers, money,
+      units, time zones, dates, and your own variables — and it does the right
+      thing without any modes, panels, or buttons.
+    </p>
+
+    <div class="feat-grid">
+      <div class="feat">
+        <h3>Plain language</h3>
+        <p>Words and operators both work. Write the way you think.</p>
+        <div class="ex">
+          <span>20% off 150</span><span class="res">120</span>
+          <span>8 times 9</span><span class="res">72</span>
+          <span>twice 50</span><span class="res">100</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Variables &amp; references</h3>
+        <p>Name a value, reuse it anywhere. <span class="mono">prev</span> grabs the line above.</p>
+        <div class="ex">
+          <span>price = 120</span><span class="res">120</span>
+          <span>tax = price * 0.2</span><span class="res">24</span>
+          <span>price + tax</span><span class="res">144</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Live currencies</h3>
+        <p>Rates refresh hourly from public ECB data. Works offline with the last cache.</p>
+        <div class="ex">
+          <span>100 usd to eur</span><span class="res">92.40 EUR</span>
+          <span>50 gbp in jpy</span><span class="res">9,455 JPY</span>
+          <span>200 cad to thb</span><span class="res">5,310 THB</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Units, all of them</h3>
+        <p>Length, mass, volume, area, energy, data, temperature, angle.</p>
+        <div class="ex">
+          <span>5 km to miles</span><span class="res">3.107 mi</span>
+          <span>70 kg to lbs</span><span class="res">154.32 lb</span>
+          <span>1.5 gb to mb</span><span class="res">1500 MB</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Dates &amp; time zones</h3>
+        <p>Add days, count business days, hop between cities.</p>
+        <div class="ex">
+          <span>today + 30 days</span><span class="res">May 31 2026</span>
+          <span>next Monday</span><span class="res">May 4 2026</span>
+          <span>9 am PST in Tokyo</span><span class="res">2:00 am</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Sums &amp; aggregates</h3>
+        <p>Drop <span class="mono">sum</span>, <span class="mono">average</span>, or <span class="mono">mean</span> on a line. Blank lines reset.</p>
+        <div class="ex">
+          <span>10 * 5</span><span class="res">50</span>
+          <span>8 + 6</span><span class="res">14</span>
+          <span>sum</span><span class="res">64</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Hex, binary, octal</h3>
+        <p>Mix bases freely; convert with <span class="mono">in&nbsp;hex</span> / <span class="mono">in&nbsp;binary</span>.</p>
+        <div class="ex">
+          <span>0xFF + 1</span><span class="res">256</span>
+          <span>10 in binary</span><span class="res">0b1010</span>
+          <span>0o17 in decimal</span><span class="res">15</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Sheets that save themselves</h3>
+        <p>Tabs at the bottom. Double-click to rename. Nothing to manage.</p>
+        <div class="ex">
+          <span>⌘T</span><span class="res">new sheet</span>
+          <span>⌘⇧R</span><span class="res">copy results</span>
+          <span>⌘⇧Space</span><span class="res">global focus</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <h3>Yours to style</h3>
+        <p>Pick the font, the canvas color, the result color. Always-on-top, menu bar, global hotkey.</p>
+        <div class="ex">
+          <span>font</span><span class="res">monospace</span>
+          <span>precision</span><span class="res">0–8 / auto</span>
+          <span>theme</span><span class="res">your colors</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="pricing-card">
+      <div>
+        <p class="eyebrow">One price. Yours forever.</p>
+        <h2>Buy Zahl once, use&nbsp;it&nbsp;forever.</h2>
+        <p class="desc">
+          A single license unlocks Zahl on up to two of your Macs. No subscriptions,
+          no accounts, no telemetry. Free updates within the major version.
+        </p>
+        <ul class="included">
+          <li>License works on two of your Macs</li>
+          <li>All future minor updates included</li>
+          <li>Direct download — no App Store account required</li>
+          <li>14-day refund, no questions asked</li>
+        </ul>
+      </div>
+      <div class="price-block">
+        <p class="price-amount"><span class="currency">$</span>10</p>
+        <p class="price-once">USD · one-time payment</p>
+        <a class="btn btn-primary" href="https://monokern.app/b/zahl-app">Buy Zahl</a>
+        <p class="small">Secure checkout via monokern.app.<br/>License key emailed instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div class="left">
+      <img src="assets/AppIcon-1024.png" alt="" />
+      <span>© 2026 Zahl. Made with care.</span>
+    </div>
+    <nav>
+      <a href="https://monokern.app/b/zahl-app">Buy</a>
+      <a href="https://monokern.app/contact">Support</a>
+      <a href="https://monokern.app/privacy">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // sticky-nav border on scroll
+  (function(){
+    const nav = document.getElementById('topnav');
+    const onScroll = () => {
+      if (window.scrollY > 8) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+</body>
+</html>

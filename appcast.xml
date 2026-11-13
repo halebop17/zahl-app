@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Zahl</title>
+        <item>
+            <title>Zahl 1.5</title>
+            <pubDate>Fri, 13 Nov 2026 16:01:13 +0000</pubDate>
+            <sparkle:version>6</sparkle:version>
+            <sparkle:shortVersionString>1.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<p>Zahl 1.5 is about getting out of your way: a calmer window, quicker ways to move between sheets, and updates that arrive on their own.</p>
+<h3>A quieter window</h3>
+<ul>
+<li>The toolbar fades out while you type and comes back when you move the mouse. To keep it on screen, choose Sheet ▸ Always Show Toolbar (⌥⌘T).</li>
+<li>Pick the toolbar you like in Settings ▸ Appearance: a floating capsule or a full-width bar.</li>
+<li>No more scroll bar in the middle of the window. Scrolling works as before.</li>
+</ul>
+<h3>Moving between sheets</h3>
+<ul>
+<li>Press ⌘K, type a few letters of a sheet's name (or its initials) and press Return to jump to it.</li>
+<li>Lots of sheets? Tabs that don't fit go into "more", and the sheet you're on always stays visible.</li>
+<li>The Sheet menu shortcuts work again: ⌘T new sheet, ⌘⇧K clear, ⌘⇧R copy results, ⌘⇧E copy sheet with results.</li>
+</ul>
+<h3>Also new</h3>
+<ul>
+<li>Zahl now updates itself: it checks for new versions about once a day. To check right away, choose Zahl ▸ Check for Updates…</li>
+<li>Try Zahl free for 7 days before entering a license key. Days left show as a small button in the toolbar.</li>
+<li>Help ▸ Open Manual opens the manual on monokern.app.</li>
+</ul>
+            ]]></description>
+            <enclosure url="https://github.com/halebop17/zahl-app/releases/download/v1.5/Zahl-1.5.dmg" type="application/octet-stream" sparkle:edSignature="aDoxm2zL3v9dp+cX8NI5cTneY63E0gMozVSdACyslYlq+lp54hZZEsjfNNyVBzcM8q7atJG/xu5nqN07yAMWDg==" length="5045902"/>
+        </item>
+    </channel>
+</rss>
